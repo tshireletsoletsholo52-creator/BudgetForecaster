@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="BudgetForecaster.Core/BudgetForecaster.Core.csproj" />
+  <Project Path="BudgetForecaster.Data/BudgetForecaster.Data.csproj" />
   <Project Path="BudgetForecaster.Tests/BudgetForecaster.Tests.csproj" />
   <Project Path="BudgetForecaster/BudgetForecaster.csproj" />
 </Solution>

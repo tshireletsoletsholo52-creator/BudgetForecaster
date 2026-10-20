@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BudgetForecaster.Core\BudgetForecaster.Core.csproj" />
+    <ProjectReference Include="..\BudgetForecaster.Data\BudgetForecaster.Data.csproj" />
   </ItemGroup>
 
 </Project>
