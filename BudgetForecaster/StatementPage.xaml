@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BudgetForecaster.StatementPage"
+             Title="Statement">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <Button Grid.Column="0" Text="&lt;" Command="{Binding PreviousMonthCommand}" />
+                <Label Grid.Column="1" Text="{Binding MonthLabel}" FontSize="22" FontAttributes="Bold"
+                       HorizontalOptions="Center" VerticalOptions="Center" />
+                <Button Grid.Column="2" Text="&gt;" Command="{Binding NextMonthCommand}" />
+            </Grid>
+
+            <!-- Summary -->
+            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="4">
+                <Label Grid.Row="0" Grid.Column="1" Text="Budgeted" FontSize="12" />
+                <Label Grid.Row="0" Grid.Column="2" Text="Actual" FontSize="12" />
+
+                <Label Grid.Row="1" Grid.Column="0" Text="Income" />
+                <Label Grid.Row="1" Grid.Column="1" Text="{Binding IncomeBudgetedText}" />
+                <Label Grid.Row="1" Grid.Column="2" Text="{Binding IncomeActualText}" />
+
+                <Label Grid.Row="2" Grid.Column="0" Text="Expenses" />
+                <Label Grid.Row="2" Grid.Column="1" Text="{Binding ExpensesBudgetedText}" />
+                <Label Grid.Row="2" Grid.Column="2" Text="{Binding ExpensesActualText}" />
+
+                <Label Grid.Row="3" Grid.Column="0" Text="Net cash" FontAttributes="Bold" />
+                <Label Grid.Row="3" Grid.Column="1" Text="{Binding NetBudgetedText}" FontAttributes="Bold" />
+                <Label Grid.Row="3" Grid.Column="2" Text="{Binding NetActualText}" FontAttributes="Bold" />
+            </Grid>
+
+            <Label Text="Nothing to show for this month. Set a budget or add transactions."
+                   IsVisible="{Binding IsEmpty}" HorizontalOptions="Center" Margin="0,24" />
+
+            <Label Text="Income" FontSize="18" FontAttributes="Bold" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding IncomeRows}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" Padding="0,6">
+                            <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" />
+                            <Label Grid.Row="0" Grid.Column="1" Text="{Binding StatusText}"
+                                   TextColor="{Binding StatusColor}" FontAttributes="Bold" />
+                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding DetailText}" FontSize="12" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Label Text="Expenses" FontSize="18" FontAttributes="Bold" Margin="0,12,0,0" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding ExpenseRows}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" Padding="0,6">
+                            <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" />
+                            <Label Grid.Row="0" Grid.Column="1" Text="{Binding StatusText}"
+                                   TextColor="{Binding StatusColor}" FontAttributes="Bold" />
+                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding DetailText}" FontSize="12" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
