@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BudgetForecaster.ForecastPage"
+             Title="Forecast">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="10">
+
+            <Label Text="Your assumptions" FontSize="18" FontAttributes="Bold" />
+
+            <Label Text="Starting savings (R)" FontSize="12" />
+            <Entry Keyboard="Numeric" Text="{Binding StartingBalanceText}" />
+
+            <Label Text="Monthly contribution (R)" FontSize="12" />
+            <Entry Keyboard="Numeric" Text="{Binding ContributionText}" />
+            <Label Text="{Binding AverageInfo}" FontSize="12" />
+            <Button Text="Use my average net cash" Command="{Binding UseAverageCommand}" />
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Expected return (% a year)" FontSize="12" />
+                    <Entry Keyboard="Numeric" Text="{Binding ReturnText}" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1">
+                    <Label Text="Inflation (% a year)" FontSize="12" />
+                    <Entry Keyboard="Numeric" Text="{Binding InflationText}" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <Button Text="Calculate forecast" Command="{Binding CalculateCommand}" />
+
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" />
+            <Label Text="{Binding WarningMessage}" TextColor="OrangeRed" FontAttributes="Bold" />
+
+            <Label Text="Projection" FontSize="18" FontAttributes="Bold" Margin="0,8,0,0"
+                   IsVisible="{Binding HasResults}" />
+
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Results}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <VerticalStackLayout Padding="0,8" Spacing="2">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Grid.Column="0" Text="{Binding Horizon}" FontAttributes="Bold" />
+                                <Label Grid.Column="1" Text="{Binding FutureText}" FontAttributes="Bold" FontSize="18" />
+                            </Grid>
+                            <Label Text="{Binding RealText}" FontSize="12" />
+                            <Label Text="{Binding DetailText}" FontSize="12" />
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Label Text="{Binding Disclaimer}" FontSize="11" Margin="0,16,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

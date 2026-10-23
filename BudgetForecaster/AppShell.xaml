@@ -10,5 +10,6 @@
         <ShellContent Title="Transactions" ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" />
         <ShellContent Title="Budget" ContentTemplate="{DataTemplate local:BudgetPage}" Route="BudgetPage" />
         <ShellContent Title="Statement" ContentTemplate="{DataTemplate local:StatementPage}" Route="StatementPage" />
+        <ShellContent Title="Forecast" ContentTemplate="{DataTemplate local:ForecastPage}" Route="ForecastPage" />
     </TabBar>
 </Shell>
