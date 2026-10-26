@@ -28,10 +28,10 @@
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 
 		<!-- Display name -->
-		<ApplicationTitle>BudgetForecaster</ApplicationTitle>
+		<ApplicationTitle>Runway</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>tshireletsoletsholo.budgetforecaster</ApplicationId>
+		<ApplicationId>com.tshireletso.runway</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
