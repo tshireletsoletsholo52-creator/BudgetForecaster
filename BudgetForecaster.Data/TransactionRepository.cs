@@ -55,6 +55,21 @@ public class TransactionRepository : ITransactionRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
+    public async Task<Transaction?> GetByIdAsync(int id)
+    {
+        await using var conn = await _db.OpenAsync();
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = """
+            SELECT Id, CategoryId, AmountCents, Date, Note
+            FROM "Transaction"
+            WHERE Id = $id;
+            """;
+        cmd.Parameters.AddWithValue("$id", id);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        return await reader.ReadAsync() ? Map(reader) : null;
+    }
+
     public async Task<IReadOnlyList<Transaction>> GetForMonthAsync(DateOnly month)
     {
         var start = new DateOnly(month.Year, month.Month, 1);
@@ -74,18 +89,18 @@ public class TransactionRepository : ITransactionRepository
         var result = new List<Transaction>();
         await using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
-        {
-            result.Add(new Transaction
-            {
-                Id = reader.GetInt32(0),
-                CategoryId = reader.GetInt32(1),
-                Amount = Money.FromCents(reader.GetInt64(2)),
-                Date = DateOnly.ParseExact(reader.GetString(3), DateFormat, CultureInfo.InvariantCulture),
-                Note = reader.IsDBNull(4) ? null : reader.GetString(4)
-            });
-        }
+            result.Add(Map(reader));
         return result;
     }
+
+    private static Transaction Map(SqliteDataReader reader) => new()
+    {
+        Id = reader.GetInt32(0),
+        CategoryId = reader.GetInt32(1),
+        Amount = Money.FromCents(reader.GetInt64(2)),
+        Date = DateOnly.ParseExact(reader.GetString(3), DateFormat, CultureInfo.InvariantCulture),
+        Note = reader.IsDBNull(4) ? null : reader.GetString(4)
+    };
 
     private static void Validate(Transaction t)
     {

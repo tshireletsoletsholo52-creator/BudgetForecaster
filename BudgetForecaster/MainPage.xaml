@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:BudgetForecaster"
@@ -31,14 +31,17 @@
             </VerticalStackLayout>
         </Grid>
 
-        <!-- Add transaction -->
+        <!-- Add / edit transaction -->
         <VerticalStackLayout Grid.Row="2" Spacing="8">
+            <Label Text="Editing a transaction" FontAttributes="Bold" TextColor="OrangeRed"
+                   IsVisible="{Binding IsEditing}" />
             <Entry Placeholder="Amount (e.g. 150.50)" Keyboard="Numeric" Text="{Binding AmountText}" />
             <Picker Title="Category" ItemsSource="{Binding Categories}"
                     ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedCategory}" />
             <DatePicker Date="{Binding SelectedDate}" />
             <Entry Placeholder="Note (optional)" Text="{Binding Note}" />
-            <Button Text="Add transaction" Command="{Binding SaveCommand}" />
+            <Button Text="{Binding SaveButtonText}" Command="{Binding SaveCommand}" />
+            <Button Text="Cancel edit" Command="{Binding CancelEditCommand}" IsVisible="{Binding IsEditing}" />
             <Label Text="{Binding ErrorMessage}" TextColor="Red" />
         </VerticalStackLayout>
 
@@ -49,14 +52,17 @@
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid ColumnDefinitions="70,*,Auto,Auto" ColumnSpacing="10" Padding="0,6">
+                    <Grid ColumnDefinitions="70,*,Auto,Auto,Auto" ColumnSpacing="8" Padding="0,6">
                         <Label Grid.Column="0" Text="{Binding DateText}" VerticalOptions="Center" />
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
                             <Label Text="{Binding CategoryName}" FontAttributes="Bold" />
                             <Label Text="{Binding Note}" FontSize="12" />
                         </VerticalStackLayout>
                         <Label Grid.Column="2" Text="{Binding AmountText}" VerticalOptions="Center" />
-                        <Button Grid.Column="3" Text="Delete"
+                        <Button Grid.Column="3" Text="Edit"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:MainViewModel}}, Path=EditCommand}"
+                                CommandParameter="{Binding Id}" />
+                        <Button Grid.Column="4" Text="Delete"
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type local:MainViewModel}}, Path=DeleteCommand}"
                                 CommandParameter="{Binding Id}" />
                     </Grid>

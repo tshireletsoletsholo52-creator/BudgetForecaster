@@ -41,6 +41,13 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty] private string _expensesText = "R 0.00";
     [ObservableProperty] private string _netText = "R 0.00";
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsEditing))]
+    [NotifyPropertyChangedFor(nameof(SaveButtonText))]
+    private int? _editingId;
+
+    public bool IsEditing => EditingId.HasValue;
+    public string SaveButtonText => IsEditing ? "Save changes" : "Add transaction";
     public string MonthLabel => Month.ToString("MMMM yyyy", CultureInfo.InvariantCulture);
 
     public async Task LoadAsync()
@@ -92,25 +99,73 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        await _transactions.AddAsync(new Transaction
+        var transaction = new Transaction
         {
+            Id = EditingId ?? 0,
             CategoryId = SelectedCategory.Id,
             Amount = Math.Round(amount, 2),
             Date = DateOnly.FromDateTime(SelectedDate),
             Note = string.IsNullOrWhiteSpace(Note) ? null : Note.Trim()
-        });
+        };
 
-        AmountText = "";
-        Note = "";
-        Month = new DateTime(SelectedDate.Year, SelectedDate.Month, 1);
+        if (EditingId.HasValue)
+            await _transactions.UpdateAsync(transaction);
+        else
+            await _transactions.AddAsync(transaction);
+
+        var savedDate = SelectedDate;
+        var wasEditing = IsEditing;
+
+        ResetForm(resetDate: wasEditing);
+        Month = new DateTime(savedDate.Year, savedDate.Month, 1);
         await RefreshAsync();
+    }
+
+    [RelayCommand]
+    private async Task EditAsync(int id)
+    {
+        ErrorMessage = "";
+
+        var t = await _transactions.GetByIdAsync(id);
+        if (t is null)
+        {
+            ErrorMessage = "That transaction no longer exists.";
+            await RefreshAsync();
+            return;
+        }
+
+        // A transaction may belong to an archived category that is not in the picker.
+        if (Categories.All(c => c.Id != t.CategoryId) && _lookup.TryGetValue(t.CategoryId, out var archived))
+            Categories.Add(archived);
+
+        EditingId = t.Id;
+        AmountText = t.Amount.ToString("F2", CultureInfo.CurrentCulture);
+        SelectedCategory = Categories.First(c => c.Id == t.CategoryId);
+        SelectedDate = t.Date.ToDateTime(TimeOnly.MinValue);
+        Note = t.Note ?? "";
+    }
+
+    [RelayCommand]
+    private void CancelEdit()
+    {
+        ErrorMessage = "";
+        ResetForm(resetDate: true);
     }
 
     [RelayCommand]
     private async Task DeleteAsync(int id)
     {
         await _transactions.DeleteAsync(id);
+        if (EditingId == id) ResetForm(resetDate: true);
         await RefreshAsync();
+    }
+
+    private void ResetForm(bool resetDate)
+    {
+        EditingId = null;
+        AmountText = "";
+        Note = "";
+        if (resetDate) SelectedDate = DateTime.Today;
     }
 
     private async Task RefreshAsync()
