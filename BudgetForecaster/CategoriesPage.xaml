@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BudgetForecaster"
+             x:Class="BudgetForecaster.CategoriesPage"
+             Title="Categories">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16" RowSpacing="12">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="8">
+            <Label Text="Renaming a category" FontAttributes="Bold" TextColor="OrangeRed"
+                   IsVisible="{Binding IsRenaming}" />
+            <Entry Placeholder="Category name (e.g. Pets)" MaxLength="40" Text="{Binding NameText}" />
+            <Picker Title="Type" ItemsSource="{Binding TypeChoices}"
+                    SelectedItem="{Binding SelectedTypeName}" IsEnabled="{Binding IsNotRenaming}" />
+            <Button Text="{Binding SaveButtonText}" Command="{Binding SaveCommand}" />
+            <Button Text="Cancel" Command="{Binding CancelRenameCommand}" IsVisible="{Binding IsRenaming}" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="1" Spacing="4">
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" />
+            <Label Text="{Binding InfoMessage}" TextColor="SeaGreen" />
+            <HorizontalStackLayout Spacing="8">
+                <Switch IsToggled="{Binding ShowArchived}" />
+                <Label Text="Show archived" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Rows}">
+            <CollectionView.EmptyView>
+                <Label Text="No categories yet." HorizontalOptions="Center" Margin="0,24" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="0,6">
+                        <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                            <Label Text="{Binding Name}" FontAttributes="Bold" />
+                            <Label Text="{Binding Subtitle}" FontSize="12" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1" Text="Rename" IsVisible="{Binding IsActive}"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:CategoriesViewModel}}, Path=StartRenameCommand}"
+                                CommandParameter="{Binding Id}" />
+                        <Button Grid.Column="2" Text="Archive" IsVisible="{Binding IsActive}"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:CategoriesViewModel}}, Path=ArchiveCommand}"
+                                CommandParameter="{Binding Id}" />
+                        <Button Grid.Column="2" Text="Restore" IsVisible="{Binding IsArchived}"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:CategoriesViewModel}}, Path=RestoreCommand}"
+                                CommandParameter="{Binding Id}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
