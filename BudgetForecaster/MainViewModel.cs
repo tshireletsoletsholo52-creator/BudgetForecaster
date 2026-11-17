@@ -55,18 +55,33 @@ public partial class MainViewModel : ObservableObject
         if (!_initialized)
         {
             await DatabaseInitializer.InitializeAsync(_db);
-
-            var all = await _categories.GetAllAsync(includeArchived: true);
-            _lookup = all.ToDictionary(c => c.Id);
-
-            foreach (var c in all.Where(c => !c.IsArchived))
-                Categories.Add(c);
-
-            SelectedCategory = Categories.FirstOrDefault(c => c.Type == CategoryType.Expense);
             _initialized = true;
         }
 
+        await ReloadCategoriesAsync();
         await RefreshAsync();
+    }
+
+    private async Task ReloadCategoriesAsync()
+    {
+        var all = await _categories.GetAllAsync(includeArchived: true);
+        _lookup = all.ToDictionary(c => c.Id);
+
+        var previousId = SelectedCategory?.Id;
+        var visible = all.Where(c => !c.IsArchived).ToList();
+
+        // While editing, keep the transaction's category in the picker even if it was archived.
+        if (EditingId.HasValue && previousId is int keepId
+            && visible.All(c => c.Id != keepId) && _lookup.TryGetValue(keepId, out var keep))
+        {
+            visible.Add(keep);
+        }
+
+        Categories.Clear();
+        foreach (var c in visible) Categories.Add(c);
+
+        SelectedCategory = Categories.FirstOrDefault(c => c.Id == previousId)
+                           ?? Categories.FirstOrDefault(c => c.Type == CategoryType.Expense);
     }
 
     [RelayCommand]

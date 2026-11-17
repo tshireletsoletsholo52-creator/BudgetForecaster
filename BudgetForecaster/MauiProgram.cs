@@ -37,6 +37,9 @@ public static class MauiProgram
         builder.Services.AddSingleton<ISettingsRepository>(new SettingsRepository(db));
         builder.Services.AddSingleton<ForecastViewModel>();
         builder.Services.AddTransient<ForecastPage>();
+        builder.Services.AddSingleton<CategoriesViewModel>();
+        builder.Services.AddTransient<CategoriesPage>();
+
         return builder.Build();
 	}
 }
